@@ -41,6 +41,8 @@
 
   
   "PQT.Action.Create": "Neue Quest",
+  "PQT.Action.CopyUUID": "UUID kopieren",
+  "PQT.Message.UUIDCopied": "Quest-UUID in die Zwischenablage kopiert.",
   "PQT.Action.Edit": "Bearbeiten",
   "PQT.Action.Delete": "Löschen",
   "PQT.Action.Track": "Verfolgen",

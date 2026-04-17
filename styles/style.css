@@ -62,6 +62,12 @@
 .icon-btn:hover {
   text-shadow: 0 0 5px var(--pqt-primary);
 }
+.copy-uuid-btn {
+  color: var(--pqt-text-muted);
+}
+.copy-uuid-btn:hover {
+  color: var(--pqt-primary);
+}
 
 /* --- Quest Log --- */
 .pqt-quest-log-container {

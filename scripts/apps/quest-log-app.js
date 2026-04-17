@@ -26,7 +26,8 @@ export class QuestLogApp extends HandlebarsApplicationMixin(ApplicationV2) {
       createQuest: QuestLogApp.createQuest,
       openQuest: QuestLogApp.openQuest,
       deleteQuest: QuestLogApp.deleteQuest,
-      setFilter: QuestLogApp.setFilter
+      setFilter: QuestLogApp.setFilter,
+      copyUuid: QuestLogApp.copyUuid
     }
   };
 
@@ -79,6 +80,7 @@ export class QuestLogApp extends HandlebarsApplicationMixin(ApplicationV2) {
       const data = q.getFlag('phils-quest-tracker', 'data');
       const enriched = {
         id: q.id,
+        uuid: q.uuid,
         ...data,
         isCompleted: data.status === 'completed',
         isFailed: data.status === 'failed',
@@ -156,6 +158,13 @@ export class QuestLogApp extends HandlebarsApplicationMixin(ApplicationV2) {
     headerActions.prepend(btn); // Or append? Prepend makes it visible first.
   }
 
+
+  static async copyUuid(event, target) {
+    event.stopPropagation();
+    const uuid = target.dataset.questUuid;
+    await navigator.clipboard.writeText(uuid);
+    ui.notifications.info(game.i18n.localize('PQT.Message.UUIDCopied'));
+  }
 
   static async deleteQuest(event, target) {
     const questId = target.dataset.questId;
