@@ -162,8 +162,9 @@ export class QuestLogApp extends HandlebarsApplicationMixin(ApplicationV2) {
   static async copyUuid(event, target) {
     event.stopPropagation();
     const uuid = target.dataset.questUuid;
-    await navigator.clipboard.writeText(uuid);
-    ui.notifications.info(game.i18n.localize('PQT.Message.UUIDCopied'));
+    const title = target.dataset.questTitle;
+    await navigator.clipboard.writeText(`@Quest[${uuid}]{${title}}`);
+    ui.notifications.info(game.i18n.localize('PQT.Message.LinkCopied'));
   }
 
   static async deleteQuest(event, target) {

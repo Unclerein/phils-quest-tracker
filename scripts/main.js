@@ -7,6 +7,22 @@ Hooks.once('init', () => {
   console.log('Phils Quest Tracker | Initializing module');
   QuestManager.init();
 
+  CONFIG.TextEditor.enrichers.push({
+    pattern: /@Quest\[([^\]]+)\](?:\{([^}]+)\})?/gd,
+    enricher: async (match, options) => {
+      const uuid = match[1];
+      const label = match[2];
+      const doc = fromUuidSync(uuid);
+      const title = label || doc?.name || uuid;
+      const a = document.createElement('a');
+      a.classList.add('pqt-quest-link');
+      a.dataset.uuid = uuid;
+      a.draggable = true;
+      a.innerHTML = `<i class="fas fa-scroll"></i> ${title}`;
+      return a;
+    }
+  });
+
   game.settings.registerMenu("phils-quest-tracker", "config", {
     name: "Quest Tracker Settings",
     label: "Open Settings",
@@ -52,6 +68,15 @@ Hooks.on('renderJournalDirectory', (app, html, data) => {
 
 Hooks.once('ready', () => {
   console.log('Phils Quest Tracker | Ready');
+
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a.pqt-quest-link');
+    if (!link) return;
+    event.preventDefault();
+    const uuid = link.dataset.uuid;
+    const doc = fromUuidSync(uuid);
+    if (doc) new QuestSheet(doc).render(true);
+  });
 
   // Expose API
   window.PhilsQuestTracker = {

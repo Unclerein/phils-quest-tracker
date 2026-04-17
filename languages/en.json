@@ -40,8 +40,8 @@
 
   
   "PQT.Action.Create": "New Quest",
-  "PQT.Action.CopyUUID": "Copy UUID",
-  "PQT.Message.UUIDCopied": "Quest UUID copied to clipboard.",
+  "PQT.Action.CopyLink": "Copy Quest Link",
+  "PQT.Message.LinkCopied": "Quest link copied to clipboard.",
   "PQT.Action.Edit": "Edit",
   "PQT.Action.Delete": "Delete",
   "PQT.Action.Track": "Track",
