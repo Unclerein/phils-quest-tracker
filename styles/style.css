@@ -1052,3 +1052,23 @@ a.pqt-quest-link:hover {
   border-color: #c0392b;
 }
 
+/* ===================== Actor Sheet Button ===================== */
+.pqt-open-log-btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  padding: 2px 5px;
+  font-size: 15px;
+  opacity: 0.65;
+  line-height: 1;
+  color: inherit;
+}
+.pqt-open-log-btn:hover {
+  opacity: 1;
+  color: var(--pqt-primary, #c5a059) !important;
+  text-shadow: 0 0 6px var(--pqt-primary, #c5a059);
+  box-shadow: none !important;
+  background: transparent !important;
+}
+

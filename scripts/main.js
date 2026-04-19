@@ -87,6 +87,33 @@ Hooks.on('renderJournalDirectory', (app, html, data) => {
   QuestLogApp.renderSidebarControl(app, html);
 });
 
+Hooks.on('renderCharacterSheet', (app, html) => {
+  // Avoid duplicate on re-render
+  if (html.querySelector('.pqt-open-log-btn')) return;
+
+  const settingsBtn = html.querySelector('[data-action="openSettings"]');
+  if (!settingsBtn) return;
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'pqt-open-log-btn';
+  btn.setAttribute('data-tooltip', game.i18n.localize('PQT.AppName'));
+  btn.innerHTML = '<i class="fas fa-scroll"></i>';
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    let existing;
+    for (const a of foundry.applications.instances.values()) {
+      if (a.id === 'phils-quest-log') { existing = a; break; }
+    }
+    if (existing) existing.render(true);
+    else new QuestLogApp().render(true);
+  });
+
+  // Insert just before the settings (wrench) button — top-right of the sheet
+  settingsBtn.insertAdjacentElement('beforebegin', btn);
+});
+
 Hooks.on('renderTileHUD', (hud, html) => {
   if (!game.user.isGM) return;
   const tile = hud.object;
