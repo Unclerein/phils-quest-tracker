@@ -292,7 +292,8 @@ export class QuestManager {
    * Handle Quest Completion Integrations
    */
   static async handleQuestCompletion(quest, data) {
-    // 1. Chat Message
+    if (!game.user.isGM) return; // Only GM sends completion messages
+
     const content = `
       <div class="pqt-chat-card">
         <h3>${game.i18n.format("PQT.Message.QuestCompleted", { title: data.title })}</h3>
@@ -305,13 +306,11 @@ export class QuestManager {
         <div class="pqt-rewards">
           ${data.rewards.map(r => {
             if (r.uuid) {
-                // Draggable Link
                 return `
                 <div class="pqt-reward-item">
                    <span class="pqt-reward-qty">${r.quantity}x</span> @UUID[${r.uuid}]{${r.name}}
                 </div>`;
             } else {
-                // Fallback / Text only
                 return `
                 <div class="pqt-reward-item">
                    <img src="${r.img}" width="24" height="24"/>
@@ -323,15 +322,24 @@ export class QuestManager {
       </div>
     `;
 
-    ChatMessage.create({
-      content: content,
-      speaker: ChatMessage.getSpeaker({ alias: "Quest Tracker" })
-    });
-
-    // 2. Calendar Integration
-    if (data.syncWithCalendar && data.dates.completed) {
-      // The updateJournalEntry hook will handle the actual event creation
-      // because we just set the flag above.
+    // Send an individual whisper to each active player — visible only to them (+ GM sees all)
+    const players = game.users.filter(u => !u.isGM && u.active);
+    if (players.length > 0) {
+      for (const player of players) {
+        await ChatMessage.create({
+          content,
+          whisper: [player.id],
+          speaker: ChatMessage.getSpeaker({ alias: "Quest Tracker" })
+        });
+      }
+    } else {
+      // No players online — notify GM privately
+      const gm = game.users.find(u => u.isGM && u.active);
+      await ChatMessage.create({
+        content,
+        whisper: gm ? [gm.id] : [],
+        speaker: ChatMessage.getSpeaker({ alias: "Quest Tracker" })
+      });
     }
   }
 

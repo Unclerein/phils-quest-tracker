@@ -163,14 +163,16 @@ Hooks.once('ready', () => {
 });
 
 // Players can't interact with the tile layer, so we listen at the canvas level.
+// Shift+right-click on a quest board tile opens the board interface.
 let _boardClickHandler = null;
 Hooks.on('canvasReady', () => {
   if (game.user.isGM) return;
 
   const canvasEl = canvas.app.canvas ?? canvas.app.view;
-  if (_boardClickHandler) canvasEl.removeEventListener('click', _boardClickHandler);
+  if (_boardClickHandler) canvasEl.removeEventListener('contextmenu', _boardClickHandler, true);
 
   _boardClickHandler = (event) => {
+    if (!event.shiftKey) return;
     if (!canvas.tiles?.placeables?.length) return;
 
     // Convert client coordinates to canvas world coordinates
@@ -190,11 +192,14 @@ Hooks.on('canvasReady', () => {
       if (!tile.document.getFlag('phils-quest-tracker', 'isQuestBoard')) continue;
       const { x, y, width, height } = tile.document;
       if (wx >= x && wx <= x + width && wy >= y && wy <= y + height) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
         new QuestBoardApp(tile.document).render(true);
         break;
       }
     }
   };
 
-  canvasEl.addEventListener('click', _boardClickHandler);
+  // Capture phase so we intercept before Foundry's own contextmenu handler
+  canvasEl.addEventListener('contextmenu', _boardClickHandler, true);
 });
