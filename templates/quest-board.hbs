@@ -1,0 +1,46 @@
+<div class="pqt-board-wrap">
+  {{#if isGM}}
+  <div class="pqt-board-toolbar">
+    <button type="button" data-action="pinQuest" class="pqt-pin-btn">
+      <i class="fas fa-thumbtack"></i> {{localize "PQT.Board.PinQuest"}}
+    </button>
+  </div>
+  {{/if}}
+
+  <div class="pqt-board-surface">
+    {{#if hasQuests}}
+      {{#each quests}}
+        <div class="pqt-paper-note" data-quest-id="{{id}}">
+          <h3 class="pqt-paper-title">{{title}}</h3>
+          {{#if descriptionExcerpt}}
+            <p class="pqt-paper-desc">{{descriptionExcerpt}}</p>
+          {{/if}}
+          <div class="pqt-paper-actions">
+            <button type="button" class="pqt-paper-btn" data-action="openQuest">
+              <i class="fas fa-book-open"></i> {{localize "PQT.Board.OpenQuest"}}
+            </button>
+            {{#if isAcceptedByMe}}
+              <span class="pqt-accepted-badge">
+                <i class="fas fa-check-circle"></i> {{localize "PQT.Board.Accepted"}}
+              </span>
+            {{else}}
+              <button type="button" class="pqt-paper-btn pqt-accept-btn" data-action="acceptQuest">
+                <i class="fas fa-handshake"></i> {{localize "PQT.Board.Accept"}}
+              </button>
+            {{/if}}
+            {{#if ../isGM}}
+              <button type="button" class="pqt-paper-btn pqt-unpin-btn" data-action="unpinQuest" data-tooltip="PQT.Board.Unpin">
+                <i class="fas fa-times"></i>
+              </button>
+            {{/if}}
+          </div>
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="pqt-board-empty">
+        <i class="fas fa-thumbtack"></i>
+        <p>{{localize "PQT.Board.Empty"}}</p>
+      </div>
+    {{/if}}
+  </div>
+</div>

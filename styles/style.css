@@ -825,3 +825,195 @@ a.pqt-quest-link:hover {
     display: block;
 }
 
+/* ===================== Quest Board ===================== */
+
+/* Tile HUD toggle button */
+.pqt-board-toggle {
+  color: #aaa;
+}
+.pqt-board-toggle.active {
+  color: var(--pqt-primary);
+  text-shadow: 0 0 8px var(--pqt-primary);
+}
+
+/* Window chrome */
+.pqt-quest-board .window-header {
+  background: #2a1108;
+  border-bottom: 2px solid #6B3A2A;
+}
+
+.pqt-quest-board .window-content {
+  background:
+    repeating-linear-gradient(
+      92deg,
+      #7a4a2a 0px, #6b3a1e 3px, #8b5a35 22px, #7a4a2a 25px
+    );
+  border: 6px solid #3D1F0F;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Board wrapper */
+.pqt-board-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* GM toolbar */
+.pqt-board-toolbar {
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 2px solid #3D1F0F;
+  flex-shrink: 0;
+}
+
+.pqt-pin-btn {
+  background: #3D1F0F !important;
+  color: var(--pqt-primary) !important;
+  border: 1px solid var(--pqt-primary) !important;
+  padding: 4px 12px;
+  font-family: var(--pqt-font);
+  font-size: 13px;
+}
+.pqt-pin-btn:hover {
+  background: #5a2f18 !important;
+}
+
+/* Board surface — paper notes laid out */
+.pqt-board-surface {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 22px;
+  padding: 28px 24px;
+  overflow-y: auto;
+}
+
+/* Empty state */
+.pqt-board-empty {
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  width: 100%;
+  margin-top: 60px;
+  font-size: 16px;
+}
+.pqt-board-empty i {
+  display: block;
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+/* Individual paper note */
+.pqt-paper-note {
+  background: linear-gradient(150deg, #fdf8f0 0%, #f0e6d0 100%);
+  color: #2c1810;
+  border-radius: 2px;
+  padding: 14px 14px 10px;
+  width: 185px;
+  min-height: 200px;
+  box-shadow: 4px 5px 14px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pqt-paper-note:nth-child(3n+1) { transform: rotate(-1.5deg); }
+.pqt-paper-note:nth-child(3n+2) { transform: rotate(1deg); }
+.pqt-paper-note:nth-child(3n)   { transform: rotate(-0.4deg); }
+
+.pqt-paper-note:hover {
+  transform: rotate(0deg) scale(1.04);
+  box-shadow: 6px 8px 20px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+}
+
+/* Red pushpin */
+.pqt-paper-note::before {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 38% 35%, #e74c3c, #8e1a0e);
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+}
+
+.pqt-paper-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a0c06;
+  margin: 0 0 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding-bottom: 6px;
+  line-height: 1.3;
+  font-family: var(--pqt-font);
+}
+
+.pqt-paper-desc {
+  font-size: 11px;
+  color: #3d2010;
+  line-height: 1.45;
+  flex: 1;
+  margin: 0 0 10px;
+  overflow: hidden;
+  font-family: Georgia, serif;
+}
+
+/* Action buttons on paper */
+.pqt-paper-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: auto;
+}
+
+.pqt-paper-btn {
+  background: transparent !important;
+  border: 1px solid #2c1810 !important;
+  color: #2c1810 !important;
+  font-size: 10px !important;
+  padding: 3px 6px !important;
+  cursor: pointer !important;
+  border-radius: 2px !important;
+  font-family: var(--pqt-font) !important;
+  line-height: normal !important;
+}
+.pqt-paper-btn:hover {
+  background: rgba(0, 0, 0, 0.12) !important;
+  box-shadow: none !important;
+  color: #2c1810 !important;
+}
+
+.pqt-accept-btn {
+  background: #27ae60 !important;
+  color: #fff !important;
+  border-color: #1e8449 !important;
+  font-weight: bold !important;
+}
+.pqt-accept-btn:hover {
+  background: #1e8449 !important;
+}
+
+.pqt-unpin-btn {
+  margin-left: auto;
+  color: #c0392b !important;
+  border-color: #c0392b !important;
+}
+.pqt-unpin-btn:hover {
+  background: rgba(192, 57, 43, 0.15) !important;
+}
+
+.pqt-accepted-badge {
+  font-size: 10px;
+  color: #1e8449;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+

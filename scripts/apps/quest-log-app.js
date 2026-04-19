@@ -54,17 +54,23 @@ export class QuestLogApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     quests = quests.filter(q => {
         const data = q.getFlag('phils-quest-tracker', 'data');
-        if (data.status !== filter) return false;
-        
+
         // Permission Check (Non-GM)
         if (!game.user.isGM) {
-             // Explicitly hide GM Only quests regardless of permissions (e.g. Authors)
              if (data.visibility === 'gm') return false;
-             
-             if (!data.visibleTo || data.visibleTo.length === 0) return true;
-             return data.visibleTo.includes(game.user.id);
+             if (data.visibleTo && data.visibleTo.length > 0 && !data.visibleTo.includes(game.user.id)) return false;
         }
-        return true;
+
+        // Per-player accepted quests appear under "active" for that player
+        if (filter === 'active') {
+            return data.status === 'active' ||
+                   (data.status === 'draft' && (data.acceptedBy || []).includes(game.user.id));
+        }
+        // Hide drafts already accepted by this player from the "draft" tab
+        if (filter === 'draft') {
+            return data.status === 'draft' && !(data.acceptedBy || []).includes(game.user.id);
+        }
+        return data.status === filter;
     });
 
     // Enrich quests and Group

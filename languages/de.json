@@ -72,5 +72,16 @@
   "PQT.Settings.ImportSuccess": "Quests erfolgreich importiert.",
   
   "PQT.Keybinding.Toggle.Name": "Quest Logbuch umschalten",
-  "PQT.Keybinding.Toggle.Hint": "Öffnet oder schließt das Quest Logbuch."
+  "PQT.Keybinding.Toggle.Hint": "Öffnet oder schließt das Quest Logbuch.",
+
+  "PQT.Tile.ToggleBoard": "Quest-Tafel umschalten",
+  "PQT.Board.Title": "Quest-Tafel",
+  "PQT.Board.PinQuest": "Quest anpinnen",
+  "PQT.Board.SelectQuest": "Quest zum Anpinnen auswählen",
+  "PQT.Board.NoDrafts": "Keine Entwurfsquests zum Anpinnen verfügbar.",
+  "PQT.Board.Accept": "Quest annehmen",
+  "PQT.Board.Accepted": "Angenommen",
+  "PQT.Board.Unpin": "Von Tafel entfernen",
+  "PQT.Board.OpenQuest": "Quest ansehen",
+  "PQT.Board.Empty": "Keine Quests auf dieser Tafel."
 }

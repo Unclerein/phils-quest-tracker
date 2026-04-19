@@ -2,9 +2,33 @@ import { QuestManager } from './quest-manager.js';
 import { QuestLogApp } from './apps/quest-log-app.js';
 import { QuestSheet } from './apps/quest-sheet.js';
 import { QuestTrackerConfig } from './apps/quest-tracker-config.js';
+import { QuestBoardApp } from './apps/quest-board-app.js';
+
+class QuestBoardTile extends foundry.canvas.placeables.Tile {
+  async _draw(options) {
+    await super._draw(options);
+    if (this.document.getFlag('phils-quest-tracker', 'isQuestBoard')) {
+      this.eventMode = 'static';
+      this.cursor = 'pointer';
+    }
+  }
+
+  _onClickLeft(event) {
+    if (!this.document.getFlag('phils-quest-tracker', 'isQuestBoard')) {
+      return super._onClickLeft(event);
+    }
+    const shiftKey = event.originalEvent?.shiftKey ?? event.shiftKey ?? false;
+    if (!shiftKey) return super._onClickLeft(event);
+    event.stopPropagation();
+    new QuestBoardApp(this.document).render(true);
+  }
+}
 
 Hooks.once('init', () => {
   console.log('Phils Quest Tracker | Initializing module');
+
+  CONFIG.Tile.objectClass = QuestBoardTile;
+
   QuestManager.init();
 
   CONFIG.TextEditor.enrichers.push({
@@ -38,8 +62,6 @@ Hooks.once('init', () => {
       { key: "KeyL" }
     ],
     onDown: () => {
-      // Check if an instance is already rendered
-      // Using foundry.applications.instances for AppV2 compatibility
       let existingApp;
       for (const app of foundry.applications.instances.values()) {
         if (app.id === "phils-quest-log") {
@@ -51,7 +73,6 @@ Hooks.once('init', () => {
       if (existingApp && existingApp.rendered) {
         existingApp.close();
       } else {
-        // If it exists but not rendered, render it. If not exists, create new.
         if (existingApp) existingApp.render(true);
         else new QuestLogApp().render(true);
       }
@@ -66,8 +87,38 @@ Hooks.on('renderJournalDirectory', (app, html, data) => {
   QuestLogApp.renderSidebarControl(app, html);
 });
 
+Hooks.on('renderTileHUD', (hud, html) => {
+  if (!game.user.isGM) return;
+  const tile = hud.object;
+  const isBoard = tile.document.getFlag('phils-quest-tracker', 'isQuestBoard') ?? false;
+
+  const btn = $(`<div class="control-icon pqt-board-toggle${isBoard ? ' active' : ''}" data-tooltip="${game.i18n.localize('PQT.Tile.ToggleBoard')}">
+    <i class="fas fa-scroll"></i>
+  </div>`);
+
+  btn.on('click', async () => {
+    if (isBoard) {
+      await tile.document.unsetFlag('phils-quest-tracker', 'isQuestBoard');
+    } else {
+      await tile.document.setFlag('phils-quest-tracker', 'isQuestBoard', true);
+      const pinned = tile.document.getFlag('phils-quest-tracker', 'pinnedQuests');
+      if (!pinned) await tile.document.setFlag('phils-quest-tracker', 'pinnedQuests', []);
+    }
+    hud.render();
+  });
+
+  html.find('.col.right').append(btn);
+});
+
 Hooks.once('ready', () => {
   console.log('Phils Quest Tracker | Ready');
+
+  game.socket.on('module.phils-quest-tracker', async (data) => {
+    if (!game.user.isGM) return;
+    if (data.type === 'acceptQuest') {
+      await QuestManager.acceptQuest(data.questId, data.userId);
+    }
+  });
 
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a.pqt-quest-link');
@@ -78,39 +129,31 @@ Hooks.once('ready', () => {
     if (doc) new QuestSheet(doc).render(true);
   });
 
-  // Expose API
   window.PhilsQuestTracker = {
     openQuest: async (questId) => {
       const quest = game.journal.get(questId);
-      if (quest) {
-        new QuestSheet(quest).render(true);
-      }
+      if (quest) new QuestSheet(quest).render(true);
     }
   };
-  
-  // Reactivity: Re-render Quest Log when Journal Entries change
-  const reRenderLog = (doc) => {
-    if (doc.documentName !== 'JournalEntry') return;
 
-    // Trigger render on all Quest Log instances
-    // We skip the flag check to ensure deletion/updates are always caught
+  const reRenderAll = (doc) => {
+    if (doc.documentName !== 'JournalEntry') return;
     for (const app of foundry.applications.instances.values()) {
       if (app instanceof QuestLogApp) app.render();
+      if (app instanceof QuestBoardApp) app.render();
     }
   };
 
   Hooks.on('createJournalEntry', (doc) => {
-      reRenderLog(doc);
-      
-      // Auto-Open Logic (Retained as it is good UX and client-side)
-      if (QuestManager.pendingCreation) {
-          const isQuest = doc.getFlag(QuestManager.ID, QuestManager.FLAG) && doc.getFlag(QuestManager.ID, QuestManager.FLAG).type === 'quest';
-          if (isQuest && doc.isOwner) {
-              new QuestSheet(doc).render(true);
-              QuestManager.pendingCreation = false;
-          }
+    reRenderAll(doc);
+    if (QuestManager.pendingCreation) {
+      const isQuest = doc.getFlag(QuestManager.ID, QuestManager.FLAG)?.type === 'quest';
+      if (isQuest && doc.isOwner) {
+        new QuestSheet(doc).render(true);
+        QuestManager.pendingCreation = false;
       }
+    }
   });
-  Hooks.on('updateJournalEntry', reRenderLog);
-  Hooks.on('deleteJournalEntry', reRenderLog);
+  Hooks.on('updateJournalEntry', reRenderAll);
+  Hooks.on('deleteJournalEntry', reRenderAll);
 });

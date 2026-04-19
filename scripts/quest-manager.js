@@ -126,6 +126,7 @@ export class QuestManager {
       source: { uuid: "", name: "", img: "" }, // Deprecated, kept for migration
       givers: [], // Array of { uuid, name, img }
       status: "draft", // active, completed, failed, available, draft
+      acceptedBy: [],  // Array of userIds who accepted this quest individually
       visibleTo: [],    // User IDs (Legacy? Use visibility field + Permissions)
       visibility: "always", // always, gm, date
       syncWithCalendar: false,
@@ -209,6 +210,15 @@ export class QuestManager {
     if (updateData.status === 'completed' && currentData.status !== 'completed') {
       await this.handleQuestCompletion(entry, newData);
     }
+  }
+
+  static async acceptQuest(questId, userId) {
+    const quest = game.journal.get(questId);
+    if (!quest) return;
+    const data = quest.getFlag(this.ID, this.FLAG) || {};
+    const acceptedBy = new Set(data.acceptedBy || []);
+    acceptedBy.add(userId);
+    await this.updateQuest(questId, { acceptedBy: Array.from(acceptedBy) });
   }
 
   /**

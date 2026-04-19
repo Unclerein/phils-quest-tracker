@@ -30,6 +30,7 @@
     "scripts/quest-manager.js",
     "scripts/apps/quest-log-app.js",
     "scripts/apps/quest-sheet.js",
+    "scripts/apps/quest-board-app.js",
     "scripts/main.js"
   ],
   "styles": [

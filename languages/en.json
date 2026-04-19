@@ -71,5 +71,16 @@
   "PQT.Settings.ImportSuccess": "Quests imported successfully.",
   
   "PQT.Keybinding.Toggle.Name": "Toggle Quest Log",
-  "PQT.Keybinding.Toggle.Hint": "Open or close the Quest Log window."
+  "PQT.Keybinding.Toggle.Hint": "Open or close the Quest Log window.",
+
+  "PQT.Tile.ToggleBoard": "Toggle Quest Board",
+  "PQT.Board.Title": "Quest Board",
+  "PQT.Board.PinQuest": "Pin a Quest",
+  "PQT.Board.SelectQuest": "Select a quest to pin",
+  "PQT.Board.NoDrafts": "No draft quests available to pin.",
+  "PQT.Board.Accept": "Accept Quest",
+  "PQT.Board.Accepted": "Accepted",
+  "PQT.Board.Unpin": "Remove from Board",
+  "PQT.Board.OpenQuest": "View Quest",
+  "PQT.Board.Empty": "No quests pinned to this board."
 }
