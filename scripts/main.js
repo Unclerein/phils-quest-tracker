@@ -90,13 +90,16 @@ Hooks.on('renderJournalDirectory', (app, html, data) => {
 Hooks.on('renderTileHUD', (hud, html) => {
   if (!game.user.isGM) return;
   const tile = hud.object;
+  if (!tile) return;
   const isBoard = tile.document.getFlag('phils-quest-tracker', 'isQuestBoard') ?? false;
 
-  const btn = $(`<div class="control-icon pqt-board-toggle${isBoard ? ' active' : ''}" data-tooltip="${game.i18n.localize('PQT.Tile.ToggleBoard')}">
-    <i class="fas fa-scroll"></i>
-  </div>`);
+  const btn = document.createElement('div');
+  btn.classList.add('control-icon', 'pqt-board-toggle');
+  if (isBoard) btn.classList.add('active');
+  btn.dataset.tooltip = game.i18n.localize('PQT.Tile.ToggleBoard');
+  btn.innerHTML = '<i class="fas fa-scroll"></i>';
 
-  btn.on('click', async () => {
+  btn.addEventListener('click', async () => {
     if (isBoard) {
       await tile.document.unsetFlag('phils-quest-tracker', 'isQuestBoard');
     } else {
@@ -107,7 +110,8 @@ Hooks.on('renderTileHUD', (hud, html) => {
     hud.render();
   });
 
-  html.find('.col.right').append(btn);
+  const colRight = html.querySelector('.col.right');
+  if (colRight) colRight.appendChild(btn);
 });
 
 Hooks.once('ready', () => {
