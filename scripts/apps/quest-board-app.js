@@ -116,7 +116,10 @@ export class QuestBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async acceptQuest(event, target) {
-    const questId = target.closest('[data-quest-id]').dataset.questId;
+    event.stopPropagation();
+    const card = target.closest('[data-quest-id]');
+    if (!card) return;
+    const questId = card.dataset.questId;
     if (game.user.isGM) {
       await QuestManager.acceptQuest(questId, game.user.id);
     } else {
@@ -125,6 +128,7 @@ export class QuestBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         questId,
         userId: game.user.id
       });
+      // Optimistic UI: re-render after the server round-trip completes
     }
   }
 }

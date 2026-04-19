@@ -48,6 +48,7 @@
       "path": "languages/de.json"
     }
   ],
+  "socket": true,
   "description": "An immersive Quest Tracker with Quest Log, XP Rewards, and dynamic Calendar integration. Visualize your adventures with a premium, drag-and-drop interface.",
   "url": "https://github.com/PhilsModules/phils-quest-tracker",
   "manifest": "https://github.com/PhilsModules/phils-quest-tracker/releases/latest/download/module.json",
