@@ -54,7 +54,9 @@ export class QuestBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         id: entry.id,
         title: data.title,
         descriptionExcerpt: excerpt,
-        isAcceptedByMe: (data.acceptedBy || []).includes(game.user.id)
+        isAccepted:  data.status !== 'draft',
+        isCompleted: data.status === 'completed',
+        isFailed:    data.status === 'failed'
       });
     }
 
@@ -121,14 +123,13 @@ export class QuestBoardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!card) return;
     const questId = card.dataset.questId;
     if (game.user.isGM) {
-      await QuestManager.acceptQuest(questId, game.user.id);
+      await QuestManager.acceptQuest(questId);
     } else {
       game.socket.emit('module.phils-quest-tracker', {
         type: 'acceptQuest',
         questId,
         userId: game.user.id
       });
-      // Optimistic UI: re-render after the server round-trip completes
     }
   }
 }

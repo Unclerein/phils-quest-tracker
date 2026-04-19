@@ -1017,3 +1017,38 @@ a.pqt-quest-link:hover {
   gap: 3px;
 }
 
+/* Completed / Failed stamp overlay */
+.pqt-paper-note {
+  position: relative; /* needed for absolute stamp */
+}
+
+.pqt-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  padding: 6px 10px;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 3px;
+  opacity: 0.82;
+  pointer-events: none;
+  font-family: Georgia, serif;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.pqt-stamp-completed {
+  color: #1e8449;
+  border-color: #1e8449;
+}
+
+.pqt-stamp-failed {
+  color: #c0392b;
+  border-color: #c0392b;
+}
+

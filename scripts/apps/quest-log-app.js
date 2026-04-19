@@ -59,12 +59,8 @@ export class QuestLogApp extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!game.user.isGM) {
             if (data.visibility === 'gm') return false;
             if (data.visibleTo?.length > 0 && !data.visibleTo.includes(game.user.id)) return false;
-
-            // Players never see draft quests in the log — only via the Quest Board.
-            // Exception: accepted drafts surface under the "active" tab.
-            if (data.status === 'draft') {
-                return filter === 'active' && (data.acceptedBy || []).includes(game.user.id);
-            }
+            // Players never see draft quests in the log — only via the Quest Board
+            if (data.status === 'draft') return false;
         }
 
         return data.status === filter;

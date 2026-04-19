@@ -212,13 +212,10 @@ export class QuestManager {
     }
   }
 
-  static async acceptQuest(questId, userId) {
+  static async acceptQuest(questId) {
     const quest = game.journal.get(questId);
     if (!quest) return;
-    const data = quest.getFlag(this.ID, this.FLAG) || {};
-    const acceptedBy = new Set(data.acceptedBy || []);
-    acceptedBy.add(userId);
-    await this.updateQuest(questId, { acceptedBy: Array.from(acceptedBy) });
+    await this.updateQuest(questId, { status: 'active' });
   }
 
   /**

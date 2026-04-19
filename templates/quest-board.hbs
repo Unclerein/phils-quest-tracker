@@ -10,7 +10,7 @@
   <div class="pqt-board-surface">
     {{#if hasQuests}}
       {{#each quests}}
-        <div class="pqt-paper-note" data-quest-id="{{id}}">
+        <div class="pqt-paper-note{{#if isCompleted}} completed{{else if isFailed}} failed{{/if}}" data-quest-id="{{id}}">
           <h3 class="pqt-paper-title">{{title}}</h3>
           {{#if descriptionExcerpt}}
             <p class="pqt-paper-desc">{{descriptionExcerpt}}</p>
@@ -19,7 +19,7 @@
             <button type="button" class="pqt-paper-btn" data-action="openQuest">
               <i class="fas fa-book-open"></i> {{localize "PQT.Board.OpenQuest"}}
             </button>
-            {{#if isAcceptedByMe}}
+            {{#if isAccepted}}
               <span class="pqt-accepted-badge">
                 <i class="fas fa-check-circle"></i> {{localize "PQT.Board.Accepted"}}
               </span>
@@ -34,6 +34,12 @@
               </button>
             {{/if}}
           </div>
+
+          {{#if isCompleted}}
+            <div class="pqt-stamp pqt-stamp-completed">{{localize "PQT.Status.Completed"}}</div>
+          {{else if isFailed}}
+            <div class="pqt-stamp pqt-stamp-failed">{{localize "PQT.Status.Failed"}}</div>
+          {{/if}}
         </div>
       {{/each}}
     {{else}}

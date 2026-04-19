@@ -175,23 +175,31 @@ Hooks.on('canvasReady', () => {
     if (!event.shiftKey) return;
     if (!canvas.tiles?.placeables?.length) return;
 
-    // Convert client coordinates to canvas world coordinates
-    let wx, wy;
+    // Convert client coordinates to canvas world coordinates.
+    // Try Foundry's own utility first, then fall back to the stage transform.
+    let worldPoint;
     try {
       if (typeof canvas.canvasCoordinatesFromClient === 'function') {
-        const pt = canvas.canvasCoordinatesFromClient({ x: event.clientX, y: event.clientY });
-        wx = pt.x; wy = pt.y;
+        worldPoint = canvas.canvasCoordinatesFromClient({ x: event.clientX, y: event.clientY });
       } else {
         const rect = canvasEl.getBoundingClientRect();
-        const pt = canvas.stage.toLocal(new PIXI.Point(event.clientX - rect.left, event.clientY - rect.top));
-        wx = pt.x; wy = pt.y;
+        // Ratio of renderer logical pixels to CSS pixels (handles zoom/HiDPI)
+        const scaleX = canvas.app.renderer.width  / rect.width;
+        const scaleY = canvas.app.renderer.height / rect.height;
+        worldPoint = canvas.stage.toLocal(
+          new PIXI.Point(
+            (event.clientX - rect.left) * scaleX,
+            (event.clientY - rect.top)  * scaleY
+          )
+        );
       }
     } catch(e) { return; }
 
     for (const tile of canvas.tiles.placeables) {
       if (!tile.document.getFlag('phils-quest-tracker', 'isQuestBoard')) continue;
-      const { x, y, width, height } = tile.document;
-      if (wx >= x && wx <= x + width && wy >= y && wy <= y + height) {
+      // tile.bounds is a PIXI.Rectangle in world coords — reliable regardless of
+      // how width/height are stored in the document schema (handles resizing).
+      if (tile.bounds?.contains(worldPoint.x, worldPoint.y)) {
         event.preventDefault();
         event.stopImmediatePropagation();
         new QuestBoardApp(tile.document).render(true);
