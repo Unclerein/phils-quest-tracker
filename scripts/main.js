@@ -161,3 +161,40 @@ Hooks.once('ready', () => {
   Hooks.on('updateJournalEntry', reRenderAll);
   Hooks.on('deleteJournalEntry', reRenderAll);
 });
+
+// Players can't interact with the tile layer, so we listen at the canvas level.
+let _boardClickHandler = null;
+Hooks.on('canvasReady', () => {
+  if (game.user.isGM) return;
+
+  const canvasEl = canvas.app.canvas ?? canvas.app.view;
+  if (_boardClickHandler) canvasEl.removeEventListener('click', _boardClickHandler);
+
+  _boardClickHandler = (event) => {
+    if (!canvas.tiles?.placeables?.length) return;
+
+    // Convert client coordinates to canvas world coordinates
+    let wx, wy;
+    try {
+      if (typeof canvas.canvasCoordinatesFromClient === 'function') {
+        const pt = canvas.canvasCoordinatesFromClient({ x: event.clientX, y: event.clientY });
+        wx = pt.x; wy = pt.y;
+      } else {
+        const rect = canvasEl.getBoundingClientRect();
+        const pt = canvas.stage.toLocal(new PIXI.Point(event.clientX - rect.left, event.clientY - rect.top));
+        wx = pt.x; wy = pt.y;
+      }
+    } catch(e) { return; }
+
+    for (const tile of canvas.tiles.placeables) {
+      if (!tile.document.getFlag('phils-quest-tracker', 'isQuestBoard')) continue;
+      const { x, y, width, height } = tile.document;
+      if (wx >= x && wx <= x + width && wy >= y && wy <= y + height) {
+        new QuestBoardApp(tile.document).render(true);
+        break;
+      }
+    }
+  };
+
+  canvasEl.addEventListener('click', _boardClickHandler);
+});

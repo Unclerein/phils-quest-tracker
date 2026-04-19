@@ -55,21 +55,18 @@ export class QuestLogApp extends HandlebarsApplicationMixin(ApplicationV2) {
     quests = quests.filter(q => {
         const data = q.getFlag('phils-quest-tracker', 'data');
 
-        // Permission Check (Non-GM)
+        // Permission check (non-GM)
         if (!game.user.isGM) {
-             if (data.visibility === 'gm') return false;
-             if (data.visibleTo && data.visibleTo.length > 0 && !data.visibleTo.includes(game.user.id)) return false;
+            if (data.visibility === 'gm') return false;
+            if (data.visibleTo?.length > 0 && !data.visibleTo.includes(game.user.id)) return false;
+
+            // Players never see draft quests in the log — only via the Quest Board.
+            // Exception: accepted drafts surface under the "active" tab.
+            if (data.status === 'draft') {
+                return filter === 'active' && (data.acceptedBy || []).includes(game.user.id);
+            }
         }
 
-        // Per-player accepted quests appear under "active" for that player
-        if (filter === 'active') {
-            return data.status === 'active' ||
-                   (data.status === 'draft' && (data.acceptedBy || []).includes(game.user.id));
-        }
-        // Hide drafts already accepted by this player from the "draft" tab
-        if (filter === 'draft') {
-            return data.status === 'draft' && !(data.acceptedBy || []).includes(game.user.id);
-        }
         return data.status === filter;
     });
 
@@ -111,7 +108,7 @@ export class QuestLogApp extends HandlebarsApplicationMixin(ApplicationV2) {
         { id: 'completed', label: "PQT.Status.Completed", css: filter === 'completed' ? 'active' : '' },
         { id: 'failed', label: "PQT.Status.Failed", css: filter === 'failed' ? 'active' : '' },
         { id: 'available', label: "PQT.Status.Available", css: filter === 'available' ? 'active' : '' },
-        { id: 'draft', label: "PQT.Status.Draft", css: filter === 'draft' ? 'active' : '' }
+        ...(game.user.isGM ? [{ id: 'draft', label: "PQT.Status.Draft", css: filter === 'draft' ? 'active' : '' }] : [])
       ]
     };
   }
