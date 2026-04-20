@@ -338,6 +338,17 @@ export class QuestManager {
         speaker: ChatMessage.getSpeaker({ alias: "Quest Tracker" })
       });
     }
+
+    // Distribute gold to each player's character (daggerheart-store: actor.system.gold.coins)
+    if (data.gold > 0) {
+      const allPlayers = game.users.filter(u => !u.isGM);
+      for (const player of allPlayers) {
+        const actor = player.character;
+        if (!actor) continue;
+        const currentCoins = actor.system.gold?.coins ?? 0;
+        await actor.update({ 'system.gold.coins': currentCoins + data.gold });
+      }
+    }
   }
 
   // --- Calendar Sync Helpers ---
