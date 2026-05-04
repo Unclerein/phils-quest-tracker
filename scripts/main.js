@@ -149,6 +149,10 @@ Hooks.once('ready', () => {
     if (data.type === 'acceptQuest') {
       await QuestManager.acceptQuest(data.questId, data.userId);
     }
+    if (data.type === 'updateQuestFlags') {
+      const expanded = foundry.utils.expandObject(data.updateData);
+      await QuestManager.updateQuest(data.questId, expanded);
+    }
   });
 
   document.addEventListener('click', (event) => {

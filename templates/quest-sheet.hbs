@@ -206,8 +206,6 @@
         <!-- Rewards Tab -->
         <div class="tab {{#if (eq activeTab 'rewards')}}active{{/if}}" data-tab="rewards" data-group="primary">
              <!-- Rewards -->
-             <!-- Always show basic rewards if GM or Completed or Revealed -->
-             {{#if (or isGM (eq quest.status "completed") hasRevealedRewards)}}
              <div class="pqt-section pqt-rewards-section pqt-drop-zone">
                <div class="section-header" style="justify-content: space-between; display: flex; align-items: center;">
                    <h3>{{localize "PQT.Field.Rewards"}}</h3>
@@ -243,13 +241,13 @@
                      {{else}}
                      <span class="reward-qty">x{{quantity}}</span>
                      {{/if}}
-                     
+
                      <input type="hidden" name="rewards.{{@index}}.name" value="{{name}}">
                      <input type="hidden" name="rewards.{{@index}}.img" value="{{img}}">
                      <input type="hidden" name="rewards.{{@index}}.type" value="{{type}}">
                      <input type="hidden" name="rewards.{{@index}}.uuid" value="{{uuid}}">
                      <input type="hidden" name="rewards.{{@index}}.revealed" value="{{revealed}}">
-         
+
                      {{#if ../isEditing}}
                      <div class="reward-actions" style="display: flex; align-items: center; margin-left: 5px;">
                           <button type="button" class="tool-btn toggle-visibility" data-action="toggleRewardVisibility" data-index="{{@index}}" title="{{#if revealed}}Hide from Players{{else}}Show to Players{{/if}}">
@@ -267,11 +265,6 @@
                  {{/each}}
                </ul>
              </div>
-             {{else}}
-             <div class="pqt-section">
-                <p>{{localize "PQT.Label.NoRewardsVisible"}}</p>
-             </div>
-             {{/if}}
         </div>
       </section>
   </article>
