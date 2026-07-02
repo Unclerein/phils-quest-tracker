@@ -1,7 +1,7 @@
 {
   "id": "phils-quest-tracker",
   "title": "Phils Quest Tracker",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "compatibility": {
     "minimum": "12",
     "verified": "13"

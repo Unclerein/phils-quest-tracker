@@ -58,6 +58,7 @@
   "PQT.Message.QuestCompleted": "Quest abgeschlossen: {title}",
   "PQT.Message.ConfirmDelete": "Bist du sicher, dass du diese Quest löschen möchtest?",
   "PQT.Message.SavingToGM": "Speichere Änderungen beim Spielleiter...",
+  "PQT.Message.NotesSaved": "Notizen gespeichert.",
   "PQT.Label.NoRewardsVisible": "Keine Belohnungen sichtbar.",
 
   "PQT.Settings.Title": "Quest Tracker Einstellungen",

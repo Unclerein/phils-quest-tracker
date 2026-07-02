@@ -396,12 +396,16 @@ export class QuestSheet extends HandlebarsApplicationMixin(ApplicationV2) {
     // Check if user has permission to update the document (Flags)
     if (!this.document.isOwner) {
         // ... (Observer Logic) ...
+        // Only act if the notes editor was actually open (field present in the form).
+        // Otherwise a tab change would submit an empty value and wipe the notes.
+        if (expanded.notes?.player === undefined) return;
+
         const currentNotes = current.notes?.player || "";
-        const newNotes = expanded.notes?.player || "";
-        
+        const newNotes = expanded.notes.player || "";
+
         if (newNotes !== currentNotes) {
              console.log(`PQT | Player Note Change Detected for ${this.document.name}`, {old: currentNotes, new: newNotes});
-             
+
              const gmUser = game.users.find(u => u.isGM && u.active);
              if (!gmUser) {
                  ui.notifications.warn("Cannot save Player Notes: No GM is currently connected.");
@@ -409,13 +413,13 @@ export class QuestSheet extends HandlebarsApplicationMixin(ApplicationV2) {
                  return;
              }
 
-             // ui.notifications.info(game.i18n.localize("PQT.Message.SavingToGM") || "Saving notes to GM...");
              game.socket.emit('module.phils-quest-tracker', {
                  type: 'updateQuestFlags',
                  questId: this.document.id,
                  updateData: { "notes.player": newNotes },
                  userId: game.user.id
              });
+             ui.notifications.info(game.i18n.localize("PQT.Message.NotesSaved"));
         } else {
              console.log("PQT | Player Notes unchanged or empty update.");
         }
